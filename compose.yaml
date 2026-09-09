@@ -5,10 +5,10 @@ services:
     ports:
     - "3307:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: "Test@123"
-      MYSQL_DATABASE: expenses_tracker
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
-    - ./mysql-data:/var/lib/mysql
+    - mysql-data:/var/lib/mysql
     networks:
     - two_tier
     healthcheck:
@@ -22,19 +22,25 @@ services:
   expensesapp:
     build:
       context: .
+    image: ${DOCKERHUB_USERNAME}/expenses-tracker-webapp-devops-expensesapp:latest
     container_name: expensesapp
-    env_file:
-    - ./.env
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     networks:
     - two_tier
     ports:
-    - "8080:8080"
+    - "8081:8080"
     depends_on:
     - mysql
     restart: always
 
 networks:
   two_tier:
+volumes:
+  mysql-data:
+
 
   
 

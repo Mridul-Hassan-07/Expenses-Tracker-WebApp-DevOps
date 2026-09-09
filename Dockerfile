@@ -16,6 +16,6 @@ workdir /app
 
 copy --from=builder /app/target/*.jar app.jar
 
-expose 8080
+expose 8081
 
 entrypoint ["java", "-jar", "app.jar"]

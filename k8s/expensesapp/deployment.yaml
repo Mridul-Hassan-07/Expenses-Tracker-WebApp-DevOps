@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expensess-app-deployment
+  namespace: expensess-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: app
+  template:
+    metadata:
+      name: expensess-app
+      labels:
+        type: app
+    spec:
+      containers:
+      - name: expensess-app
+        image: mridul1265/expenses-tracker-webapp-devops-expensesapp 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        
+        envFrom:
+        - secretRef:
+            name: expensess-secret
+
