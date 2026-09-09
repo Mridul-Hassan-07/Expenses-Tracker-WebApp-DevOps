@@ -112,13 +112,13 @@ jobs:
             echo "Applying kubernetes manifests..."
             kubectl apply -f k8s/ -R
 
-            echo "Updating Django image...."
+            echo "Updating expensess-app image...."
             kubectl set image deployment/django \
             expensess-app="$APP_IMAGE" \
             --namespace="$NAMESPACE"
             
-            echo "Waiting for Django rollout..."
-            kubectl rollout status deployment/django \
+            echo "Waiting for expensess-app rollout..."
+            kubectl rollout status deployment/expensess-app-deployment \
             --namespace="$NAMESPACE" \
             --timeout=180s
 
