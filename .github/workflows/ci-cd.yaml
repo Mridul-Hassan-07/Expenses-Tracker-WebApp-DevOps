@@ -90,14 +90,14 @@ jobs:
       - name: Deploy application to kubernetes
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.EC_SERVER }}
+          host: ${{ secrets.EC2_SERVER }}
           username: ${{ secrets.EC_HOST }}
           key: ${{ secrets.EC2_KEY }}
           script: |
             set -e
 
             NAMESPACE="expensess-app"
-                  DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
+            DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
 
             APP_IMAGE="$DOCKERHUB_USERNAME/expenses-tracker-webapp-devops-expensesapp:latest"
 
