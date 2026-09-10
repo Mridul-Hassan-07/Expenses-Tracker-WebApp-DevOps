@@ -56,19 +56,26 @@ pipeline {
                         credentialsId: 'mysql-root-password',
                         variable: 'MYSQL_ROOT_PASSWORD'
                     ),
+                         string(
+                        credentialsId: 'mysql-database',
+                        variable: 'MYSQL_DATABASE'
+                    ),
                     string(
-                        credentialsId: 'db-password',
-                        variable: 'DB_PASSWORD'
-                    )
+                        credentialsId: 'spring-datasource-url',
+                        variable: 'SPRING_DATASOURCE_URL'
+                        ),
+                    string(
+                        credentialsId: 'spring-datasource-username',
+                        variable: 'SPRING_DATASOURCE_USERNAME'
+                        ),
+                    string(
+                        credentialsId: 'spring-datasource-password',
+                        variable: 'SPRING_DATASOURCE_PASSWORD'
+                        )
+                    
                 ]) {
                     sh '''
-                        export DB_NAME=test_db
-                        export DB_USER=root
-                        export DB_PORT=3306
-                        export DB_HOST=db_cont
-                        export MYSQL_DATABASE=test_db
-
-                        sleep 200
+                        sleep 60
 
                         curl -f http://localhost:8081
                     '''
