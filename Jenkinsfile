@@ -13,9 +13,10 @@ pipeline {
         stage('Build & Start') {
             steps {
                 withCredentials([
-                    string(
-                        credentialsId: 'dockerhub-username',
-                        variable: 'DOCKERHUB_USERNAME'
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_PASSWORD'
                     ),
                     string(
                         credentialsId: 'mysql-root-password',
