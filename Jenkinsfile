@@ -50,6 +50,7 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
                         usernameVariable: 'DOCKERHUB_USERNAME',
                         passwordVariable: 'DOCKERHUB_PASSWORD'
                     ),
@@ -105,9 +106,11 @@ pipeline {
         stage('Push Images') {
             steps {
                 withCredentials([
-                    string(
-                        credentialsId: 'DOCKERHUB_USERNAME',
-                        variable: 'DOCKERHUB_USERNAME'
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_PASSWORD',
+
                     )
                 ]) {
                     sh '''
