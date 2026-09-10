@@ -48,9 +48,9 @@ pipeline {
         stage('Test') {
             steps {
                 withCredentials([
-                    string(
-                        credentialsId: 'DOCKERHUB_USERNAME',
-                        variable: 'DOCKERHUB_USERNAME'
+                    usernamePassword(
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_PASSWORD'
                     ),
                     string(
                         credentialsId: 'mysql-root-password',
