@@ -161,7 +161,7 @@ pipeline {
                             kubectl apply -f k8s/ -R
 
                             echo "Confirming django deployment exists in $NAMESPACE..."
-                            kubectl get deployment django --namespace="$NAMESPACE"
+                            kubectl get deployment expensess-app-deployment --namespace="$NAMESPACE"
 
                             echo "Updating expensess-app image..."
                             kubectl set image deployment/expensess-app-deployment \
