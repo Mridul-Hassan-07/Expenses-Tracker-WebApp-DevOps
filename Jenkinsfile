@@ -26,15 +26,15 @@ pipeline {
                         variable: 'MYSQL_DATABASE'
                     ),
                     string(
-                        credentialsId: 'spring-datasource-url'
+                        credentialsId: 'spring-datasource-url',
                         variable: 'SPRING_DATASOURCE_URL'
                         ),
                     string(
-                        credentialsId: 'spring-datasource-username'
+                        credentialsId: 'spring-datasource-username',
                         variable: 'SPRING_DATASOURCE_USERNAME'
                         ),
                     string(
-                        credentialsId: 'spring-datasource-password'
+                        credentialsId: 'spring-datasource-password',
                         variable: 'SPRING_DATASOURCE_PASSWORD'
                         )
                 ]) {
