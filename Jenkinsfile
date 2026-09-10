@@ -1,4 +1,4 @@
-ipeline {
+pipeline {
     agent any
 
     stages {
@@ -102,67 +102,6 @@ ipeline {
             }
         }
 
-        stage('Deploy to Docker EC2') {
-            steps {
-                withCredentials([
-                    sshUserPrivateKey(
-                        credentialsId: 'docker-server',
-                        keyFileVariable: 'SSH_KEY',
-                        usernameVariable: 'SSH_USER'
-                    ),
-                    string(
-                        credentialsId: 'DOCKERHUB_USERNAME',
-                        variable: 'DOCKERHUB_USERNAME'
-                    ),
-                    string(
-                        credentialsId: 'mysql-root-password',
-                        variable: 'MYSQL_ROOT_PASSWORD'
-                    ),
-                    string(
-                        credentialsId: 'db-password',
-                        variable: 'DB_PASSWORD'
-                    )
-                ]) {
-                    sh '''
-                        set -e
-                        echo "Copying compose.yaml to Docker EC2..."
-                        scp -i "$SSH_KEY" \
-                            -o StrictHostKeyChecking=no \
-                            compose.yaml \
-                            "$SSH_USER@3.109.110.26:/home/ubuntu/Docker-django-notes-app/"
-
-                        echo "Deploying application to Docker EC2..."
-                        ssh -i "$SSH_KEY" \
-                            -o StrictHostKeyChecking=no \
-                            "$SSH_USER@3.109.110.26" \
-                            "DOCKERHUB_USERNAME='$DOCKERHUB_USERNAME' \
-                             DB_PASSWORD='$DB_PASSWORD' \
-                             MYSQL_ROOT_PASSWORD='$MYSQL_ROOT_PASSWORD' \
-                             bash -s" << 'EOF'
-                            set -e
-                            export DOCKERHUB_USERNAME="$DOCKERHUB_USERNAME"
-                            export DB_NAME="test_db"
-                            export DB_USER="root"
-                            export DB_PASSWORD="$DB_PASSWORD"
-                            export DB_PORT="3306"
-                            export DB_HOST="db_cont"
-                            export MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD"
-                            export MYSQL_DATABASE="test_db"
-                            cd /home/ubuntu/Docker-django-notes-app
-                            echo "Pulling latest images..."
-                            docker compose pull
-                            echo "Starting application..."
-                            docker compose up -d --remove-orphans
-                            echo "Removing unused Docker images..."
-                            docker image prune -f
-                            echo "Deployment status:"
-                            docker compose ps
-EOF
-                    '''
-                }
-            }
-        }
-
         stage('Deploy to Kubernetes EC2') {
             steps {
                 withCredentials([
@@ -246,4 +185,3 @@ EOF
         }
     }
 }
-#### 
