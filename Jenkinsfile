@@ -124,13 +124,14 @@ pipeline {
             steps {
                 withCredentials([
                     sshUserPrivateKey(
-                        credentialsId: 'kubernetes-server',
+                        credentialsId: 'kubernetes-server-credentials',
                         keyFileVariable: 'SSH_KEY',
                         usernameVariable: 'SSH_USER'
                     ),
-                    string(
-                        credentialsId: 'DOCKERHUB_USERNAME',
-                        variable: 'DOCKERHUB_USERNAME'
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_PASSWORD'
                     )
                 ]) {
                     sh '''
@@ -147,9 +148,8 @@ pipeline {
                             "$SSH_USER@13.127.214.122" \
                             "DOCKERHUB_USERNAME='$DOCKERHUB_USERNAME' bash -s" << 'EOF'
                             set -e
-                            NAMESPACE="notes-app"
-                            DJANGO_IMAGE="$DOCKERHUB_USERNAME/docker-django-notes-app-django_app:latest"
-                            NGINX_IMAGE="$DOCKERHUB_USERNAME/django-nginx:latest"
+                            NAMESPACE="expensess-app"
+                            APP_IMAGE="$DOCKERHUB_USERNAME/expenses-tracker-webapp-devops-expensesapp:latest"
                             cd /home/ubuntu
 
                             echo "Checking Kubernetes connection..."
@@ -163,25 +163,16 @@ pipeline {
                             echo "Confirming django deployment exists in $NAMESPACE..."
                             kubectl get deployment django --namespace="$NAMESPACE"
 
-                            echo "Updating Django image..."
-                            kubectl set image deployment/django \
-                                django="$DJANGO_IMAGE" \
+                            echo "Updating expensess-app image..."
+                            kubectl set image deployment/expensess-app-deployment \
+                                expensess-app="$APP_IMAGE" \
                                 --namespace="$NAMESPACE"
 
-                            echo "Updating Nginx image..."
-                            kubectl set image deployment/nginx-deploy \
-                                nginx="$NGINX_IMAGE" \
-                                --namespace="$NAMESPACE"
-
-                            echo "Waiting for Django rollout..."
-                            kubectl rollout status deployment/django \
+                            echo "Waiting for expensess-app rollout..."
+                            kubectl rollout status deployment/expensess-app-deployment \
                                 --namespace="$NAMESPACE" \
                                 --timeout=180s
 
-                            echo "Waiting for Nginx rollout..."
-                            kubectl rollout status deployment/nginx-deploy \
-                                --namespace="$NAMESPACE" \
-                                --timeout=180s
 
                             echo "Kubernetes deployment completed successfully."
                             echo "Pods:"
